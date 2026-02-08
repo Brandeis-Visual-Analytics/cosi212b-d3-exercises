@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .bar { fill: steelblue; }
+        .bar:hover { fill: orange; }
+        .line { fill: none; stroke: tomato; stroke-width: 2px; }
+        .tooltip {
+            position: absolute; opacity: 0; background: white;
+            border: 1px solid #ccc; padding: 5px; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>D3.js: Bar and Line Charts</h2>
+    <div id="d3-container"></div>
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        const data = [
+            {cat: 'A', val: 30}, {cat: 'B', val: 80}, 
+            {cat: 'C', val: 45}, {cat: 'D', val: 60}
+        ];
+
+        const margin = {top: 20, right: 30, bottom: 40, left: 40},
+              width = 400 - margin.left - margin.right,
+              height = 300 - margin.top - margin.bottom;
+
+        const svg = d3.select("#d3-container").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleBand().range([0, width]).domain(data.map(d => d.cat)).padding(0.1);
+        const y = d3.scaleLinear().range([height, 0]).domain([0, 100]);
+
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
+
+        // Tooltip logic
+        const tip = d3.select("#tooltip");
+
+        // Bar Chart
+        svg.selectAll(".bar").data(data).enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.cat)).attr("width", x.bandwidth())
+            .attr("y", d => y(d.val)).attr("height", d => height - y(d.val))
+            .on("mouseover", (e, d) => tip.style("opacity", 1).html(`Value: ${d.val}`))
+            .on("mousemove", (e) => tip.style("left", (e.pageX+10)+"px").style("top", (e.pageY-10)+"px"))
+            .on("mouseout", () => tip.style("opacity", 0));
+
+        // Line Chart (Overlayed)
+        const line = d3.line().x(d => x(d.cat) + x.bandwidth()/2).y(d => y(d.val));
+        svg.append("path").datum(data).attr("class", "line").attr("d", line);
+    </script>
+</body>
+</html>

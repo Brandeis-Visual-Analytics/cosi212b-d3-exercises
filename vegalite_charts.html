@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <h2>Vega-Lite: Bar and Line Charts</h2>
+  <div id="vis"></div>
+
+  <script>
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "data": {
+        "values": [
+          {"cat": "A", "val": 30}, {"cat": "B", "val": 80},
+          {"cat": "C", "val": 45}, {"cat": "D", "val": 60}
+        ]
+      },
+      "layer": [
+        {
+          "mark": "bar",
+          "encoding": {
+            "x": {"field": "cat", "type": "nominal"},
+            "y": {"field": "val", "type": "quantitative"},
+            "tooltip": [{"field": "cat"}, {"field": "val"}]
+          }
+        },
+        {
+          "mark": {"type": "line", "color": "red"},
+          "encoding": {
+            "x": {"field": "cat", "type": "nominal"},
+            "y": {"field": "val", "type": "quantitative"}
+          }
+        }
+      ]
+    };
+    vegaEmbed('#vis', spec);
+  </script>
+</body>
+</html>
